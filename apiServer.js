@@ -8,7 +8,7 @@ let wolframBot = require('./wolframBot');
 module.exports = function(){
 	console.log('process.env -->', process.env);
 	let app = express();
-	let port = process.env.port || config.get('port');
+	let port = process.env.PORT || config.get('port');
 
 	// body parser middleware
 	app.use(bodyParser.urlencoded({ extended: true }));
