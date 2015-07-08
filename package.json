@@ -4,7 +4,8 @@
   "description": "Slack with Wolfram|Alpha",
   "main": "app.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start":"node app.js"
   },
   "author": "Jasper Mishra <abhishek1704@gmail.com> (https://www.linkedin.com/profile/view?id=168344449)",
   "license": "ISC",
