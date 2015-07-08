@@ -35,7 +35,7 @@ module.exports = function(req, res, next){
 		return new Promise((resolve, reject) => {
 			let options = {
 				host:config.get('host'),
-				path:config.get('path')+queryString,
+				path:config.get('path')+"?"+queryString,
 				method:'GET'
 			};
 			let wolframReq = http.request(options, wolframRes => {
