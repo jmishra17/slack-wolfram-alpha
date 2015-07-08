@@ -8,18 +8,21 @@ let wolframParser = require('./wolframParser');
 
 module.exports = function(req, res, next){
 	let triggerWord = req.body.trigger_word;
-	if(config.get('username') !== req.body.user_name){
+	let configUsername = process.env.username || config.get('username');
+	let configTriggerWords = process.env.triggerWords || config.get('triggerWords');
+	if(configUsername !== req.body.user_name){
 		return res.status(200).json({text:"bad username"}).end();
 	}
-	if(_.indexOf(config.get('triggerWords'), triggerWord) === -1){
-		return res.status(200).send('bad triggerWord').end();
+	if(_.indexOf(configTriggerWords, triggerWord) === -1){
+		return res.status(200).send({trigger:'bad triggerWord'}).end();
 	}
 
 	let text = req.body.text;
 	let equation = text.substr(text.indexOf(' ')+1);
+	let appid = process.env.appid || config.get('appid');
 	let queryObj = {
 		input:equation,
-		appid:config.get('appid')
+		appid:appid
 	};
 
 	let queryString = qs.stringify(queryObj);
@@ -33,9 +36,11 @@ module.exports = function(req, res, next){
 
 	function getWolframRest(queryString){
 		return new Promise((resolve, reject) => {
+			let host = process.env.host || config.get('host');
+			let path = process.env.path || config.get('path');
 			let options = {
-				host:config.get('host'),
-				path:config.get('path')+"?"+queryString,
+				host:host,
+				path:path+"?"+queryString,
 				method:'GET'
 			};
 			let wolframReq = http.request(options, wolframRes => {
