@@ -9,7 +9,7 @@ let wolframParser = require('./wolframParser');
 module.exports = function(req, res, next){
 	let triggerWord = req.body.trigger_word;
 	if(config.get('username') !== req.body.user_name){
-		return res.status(400).send('bad username').end();
+		return res.status(400).json({text:"bad username"}).end();
 	}
 	if(_.indexOf(config.get('triggerWords'), triggerWord) === -1){
 		return res.status(400).send('bad triggerWord').end();
