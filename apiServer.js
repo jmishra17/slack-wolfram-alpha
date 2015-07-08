@@ -6,6 +6,7 @@ let morgan = require('morgan');
 let wolframBot = require('./wolframBot');
 
 module.exports = function(){
+	console.log('process.env -->', process.env);
 	let app = express();
 	let port = process.env.PORT || config.get('port');
 
