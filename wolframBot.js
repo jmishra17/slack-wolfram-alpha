@@ -33,7 +33,7 @@ module.exports = function(req, res, next){
 	getWolframRest(queryString).then(response => {
 		parseString(response, (err, parsedJson) => {
 			let attachments = wolframParser(parsedJson);
-			res.status(200).json(attachments);
+			return res.status(200).json(attachments);
 		});
 	});
 
