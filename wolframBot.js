@@ -16,9 +16,9 @@ module.exports = function(req, res, next){
 	// if(configUsername !== req.body.user_name){
 	// 	return res.status(200).json({text:"bad username"}).end();
 	// }
-	if(_.indexOf(configTriggerWords, triggerWord) === -1){
-		return res.status(200).send({trigger:'bad triggerWord'}).end();
-	}
+	// if(_.indexOf(configTriggerWords, triggerWord) === -1){
+	// 	return res.status(200).send({text:'bad triggerWord'}).end();
+	// }
 
 	let text = req.body.text;
 	let equation = text.substr(text.indexOf(' ')+1);
