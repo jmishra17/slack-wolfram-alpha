@@ -7,6 +7,8 @@ let parseString = require('xml2js').parseString;
 let wolframParser = require('./wolframParser');
 
 module.exports = function(req, res, next){
+	console.log('process.env.username -->', process.env.username);
+	console.log('process.env.triggerWord -->', process.env.triggerWord);
 	let triggerWord = req.body.trigger_word;
 	let configUsername = process.env.username || config.get('username');
 	let configTriggerWords = process.env.triggerWords || config.get('triggerWords');
