@@ -13,9 +13,9 @@ module.exports = function(req, res, next){
 	let triggerWord = req.body.trigger_word;
 	let configUsername = process.env.username || config.get('username');
 	let configTriggerWords = process.env.triggerWords || config.get('triggerWords');
-	if(configUsername !== req.body.user_name){
-		return res.status(200).json({text:"bad username"}).end();
-	}
+	// if(configUsername !== req.body.user_name){
+	// 	return res.status(200).json({text:"bad username"}).end();
+	// }
 	if(_.indexOf(configTriggerWords, triggerWord) === -1){
 		return res.status(200).send({trigger:'bad triggerWord'}).end();
 	}
