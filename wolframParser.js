@@ -13,10 +13,10 @@ module.exports = function(data){
 				let fullPodTitle = subpodTitle.length > 0 
 											? podTitle + " - " + subpodTitle : podTitle; 
 				attachment.fallback = fullPodTitle+" | "+postFixTitle;
-				attachment.title = fullPodTitle ;
+				// attachment.title = fullPodTitle ;
+				attachment.title = subpodTitle ;
 				// attachment.text = fullPodTitle;
 				attachment.image_url = subpod.img[0].$.src;
-				attachment.color = '#fa6800';
 				attachments.push(attachment);
 			});
 		});
