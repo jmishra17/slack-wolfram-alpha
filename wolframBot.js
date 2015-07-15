@@ -7,31 +7,28 @@ let parseString = require('xml2js').parseString;
 let wolframParser = require('./wolframParser');
 
 module.exports = function(req, res, next){
-	console.log('req.body -->', req.body);
-	console.log('process.env.username -->', process.env.username);
-	console.log('process.env.triggerWords -->', process.env.triggerWords);
 	let triggerWord = req.body.trigger_word;
 	let configUsername = process.env.username || config.get('username');
 	let configTriggerWords = process.env.triggerWords || config.get('triggerWords');
-	// if(configUsername !== req.body.user_name){
-	// 	return res.status(200).json({text:"bad username"}).end();
-	// }
-	// if(_.indexOf(configTriggerWords, triggerWord) === -1){
-	// 	return res.status(200).send({text:'bad triggerWord'}).end();
-	// }
-
 	let text = req.body.text;
 	let equation = text.substr(text.indexOf(' ')+1);
 	let appid = process.env.appid || config.get('appid');
+	let timeoutBeforeAsync = 
+							process.env.timeoutBeforeAsync 
+							|| config.get('timeoutBeforeAsync');
+
 	let queryObj = {
 		input:equation,
-		appid:appid
+		appid:appid,
+		async:timeoutBeforeAsync
 	};
-
+	queryObj = _.merge(queryObj, req.query);
+	console.log('queryObj --->', queryObj);
 	let queryString = qs.stringify(queryObj);
 
 	getWolframRest(queryString).then(response => {
 		parseString(response, (err, parsedJson) => {
+			console.log('parsedJson --->', parsedJson);
 			let attachments = wolframParser(parsedJson);
 			res.status(200).json(attachments);
 		});
@@ -44,7 +41,9 @@ module.exports = function(req, res, next){
 			let options = {
 				host:host,
 				path:path+"?"+queryString,
-				method:'GET'
+				method:'GET',
+				async: timeoutBeforeAsync
+
 			};
 			let wolframReq = http.request(options, wolframRes => {
 				let str = '';
