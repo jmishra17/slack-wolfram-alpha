@@ -1,27 +1,52 @@
-let _ = require('lodash');
+import _ from 'lodash';
+import Promise from 'bluebird';
+import request from 'request';
+import {parseString} from 'xml2js';
+let prequest = Promise.promisify(request);
+let pParseString = Promise.promisify(parseString);
 module.exports = function(data){
 	let attachments = [];
 	let postFixTitle = data.queryresult.pod[0].subpod[0].plaintext[0];
-	return processPodData(data.queryresult.pod);
+	processPodData(data.queryresult.pod).then(result => {
+		console.log('result --->', result);
+		console.log('result --->', result.attachments.length);
+		return result;
+	});
 
-	function processPodData(pods){
+	async function processPodData(pods){
+		let asyncPodPromises = [];
 		_.forEach(pods, pod => {
 			if(pod.$.async){
-				console.log('async pod --->', pod);
-
+				let asyncPodPromise = prequest(pod.$.async);
+				asyncPodPromises.push(asyncPodPromise);
 			} else {
-				_.forEach(pod.subpod, subpod => {
-					let attachment = getFinishedAttachment(pod, subpod);
-					attachments.push(attachment);
-				});
+				addPodToAttachments(pod);
 			}
 		});
+		console.log('attachments.length --->', attachments.length);
+		let asyncPodResults = await* Promise.all(asyncPodPromises);
+		let parseToJsonPromises = asyncPodResults.map(asyncPodResult => {
+			return pParseString(asyncPodResult[0].body);
+		});
+		let parseToJsonResults = await* Promise.all(parseToJsonPromises);
+		parseToJsonResults.map(jsonResult => {
+			addPodToAttachments(jsonResult.pod);
+		});
+		console.log('attachments2.length --->', attachments.length);
 		return {
-				attachments:attachments,
-				text:'some text'};
-	}	
+					attachments:attachments,
+					text:'some text'};
+	}
 
-	function getFinishedAttachment(pod, subpod){
+	function addPodToAttachments(pod){
+		_.forEach(pod.subpod, subpod => {
+			let attachment = getAttachment(pod, subpod);
+			// console.log('attachment -->', attachment);
+			attachments.push(attachment);
+		});
+	}
+
+	function getAttachment(pod, subpod){
 		let attachment = {};
 		let podTitle = pod.$.title;
 		let subpodTitle = subpod.$.title;
@@ -35,9 +60,4 @@ module.exports = function(data){
 		return attachment;
 
 	}	
-
-	function getAsyncAttachment(pod, subpod){
-		let attachment = {};
-
-	}
 }

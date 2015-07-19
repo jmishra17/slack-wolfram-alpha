@@ -5,7 +5,7 @@
   "main": "app.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start":"node app.js"
+    "start": "node app.js"
   },
   "author": "Jasper Mishra <abhishek1704@gmail.com> (https://www.linkedin.com/profile/view?id=168344449)",
   "license": "ISC",
@@ -18,6 +18,7 @@
     "lodash": "^3.10.0",
     "morgan": "^1.6.0",
     "nconf": "^0.7.1",
+    "request": "^2.58.0",
     "xml2js": "^0.4.9"
   }
 }

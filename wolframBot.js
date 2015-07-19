@@ -23,12 +23,12 @@ module.exports = function(req, res, next){
 		async:timeoutBeforeAsync
 	};
 	queryObj = _.merge(queryObj, req.query);
-	console.log('queryObj --->', queryObj);
+	// console.log('queryObj --->', queryObj);
 	let queryString = qs.stringify(queryObj);
 
 	getWolframRest(queryString).then(response => {
 		parseString(response, (err, parsedJson) => {
-			console.log('parsedJson --->', parsedJson);
+			// console.log('parsedJson --->', parsedJson);
 			let attachments = wolframParser(parsedJson);
 			res.status(200).json(attachments);
 		});
