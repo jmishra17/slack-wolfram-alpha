@@ -50,8 +50,8 @@ module.exports = function(data){
 									? podTitle + " - " + subpodTitle : podTitle; 
 		attachment.fallback = fullPodTitle+" | "+postFixTitle;
 		attachment.color = "#77a5b6";
-		attachment.title = subpodTitle;
-		attachment.text = `*${fullPodTitle}*`;
+		attachment.title = `${fullPodTitle}`;
+		// attachment.text = `*${fullPodTitle}*`;
 		attachment.image_url = subpod.img[0].$.src;
 		return attachment;
 
