@@ -49,9 +49,9 @@ module.exports = function(data){
 		let fullPodTitle = subpodTitle.length > 0 
 									? podTitle + " - " + subpodTitle : podTitle; 
 		attachment.fallback = fullPodTitle+" | "+postFixTitle;
-		// attachment.title = fullPodTitle ;
-		attachment.title = subpodTitle ;
-		attachment.text = "&lt;span style='color:#77a5b6'&gt;&lt;strong&gt;"+fullPodTitle+"&lt;/strong&gt;&lt;/span&gt;";
+		attachment.color = "#77a5b6";
+		attachment.title = subpodTitle;
+		attachment.text = fullPodTitle;
 		attachment.image_url = subpod.img[0].$.src;
 		return attachment;
 
