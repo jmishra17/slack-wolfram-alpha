@@ -7,11 +7,7 @@ let pParseString = Promise.promisify(parseString);
 module.exports = function(data){
 	let attachments = [];
 	let postFixTitle = data.queryresult.pod[0].subpod[0].plaintext[0];
-	processPodData(data.queryresult.pod).then(result => {
-		console.log('result --->', result);
-		console.log('result --->', result.attachments.length);
-		return result;
-	});
+	return processPodData(data.queryresult.pod);
 
 	async function processPodData(pods){
 		let asyncPodPromises = [];
@@ -23,7 +19,7 @@ module.exports = function(data){
 				addPodToAttachments(pod);
 			}
 		});
-		console.log('attachments.length --->', attachments.length);
+		// console.log('attachments.length --->', attachments.length);
 		let asyncPodResults = await* Promise.all(asyncPodPromises);
 		let parseToJsonPromises = asyncPodResults.map(asyncPodResult => {
 			return pParseString(asyncPodResult[0].body);
@@ -32,7 +28,7 @@ module.exports = function(data){
 		parseToJsonResults.map(jsonResult => {
 			addPodToAttachments(jsonResult.pod);
 		});
-		console.log('attachments2.length --->', attachments.length);
+		// console.log('attachments2.length --->', attachments.length);
 		return {
 					attachments:attachments,
 					text:'some text'};

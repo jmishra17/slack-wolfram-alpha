@@ -1,10 +1,13 @@
-let config = require('./config');
-let _ = require('lodash');
-let Promise = require('bluebird');
-let http  = require('http');
-let qs = require('querystring');
-let parseString = require('xml2js').parseString;
-let wolframParser = require('./wolframParser');
+import config from './config';
+import _ from 'lodash';
+import Promise from 'bluebird';
+import http from 'http';
+import qs from 'querystring';
+import wolframParser from './wolframParser';
+import request from 'request';
+import {parseString} from 'xml2js';
+let prequest = Promise.promisify(request);
+let pParseString = Promise.promisify(parseString);
 
 module.exports = function(req, res, next){
 	let triggerWord = req.body.trigger_word;
@@ -23,48 +26,18 @@ module.exports = function(req, res, next){
 		async:timeoutBeforeAsync
 	};
 	queryObj = _.merge(queryObj, req.query);
-	// console.log('queryObj --->', queryObj);
 	let queryString = qs.stringify(queryObj);
-
-	getWolframRest(queryString).then(response => {
-		parseString(response, (err, parsedJson) => {
-			// console.log('parsedJson --->', parsedJson);
-			let attachments = wolframParser(parsedJson);
-			res.status(200).json(attachments);
-		});
+	getData(queryString).then(result => {
+		res.status(200).json(result);
 	});
 
-	function getWolframRest(queryString){
-		return new Promise((resolve, reject) => {
-			let host = process.env.host || config.get('host');
-			let path = process.env.path || config.get('path');
-			let options = {
-				host:host,
-				path:path+"?"+queryString,
-				method:'GET',
-				async: timeoutBeforeAsync
-
-			};
-			let wolframReq = http.request(options, wolframRes => {
-				let str = '';
-				wolframRes.on('data', function (chunk) {
-					str += chunk;
-				});
-				wolframRes.on('error', wolframError => {
-					reject(error);
-				});
-
-				wolframRes.on('end', () => {
-					resolve(str);
-				});
-
-			});
-			wolframReq.on('error', function (e) {
-				reject(e);
-			});
-			wolframReq.end();
-
-		});
-
+	async function getData(queryString){
+		let host = process.env.host || config.get('host');
+		let path = process.env.path || config.get('path');
+		let url = host + path + "?" + queryString;
+		let wolframResponse = await prequest(url);
+		let jsonBody = await pParseString(wolframResponse[0].body);
+		let attachmentsObj  = await wolframParser(jsonBody);
+		return attachmentsObj;
 	}
 }
