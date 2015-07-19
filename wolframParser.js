@@ -19,7 +19,6 @@ module.exports = function(data){
 				addPodToAttachments(pod);
 			}
 		});
-		// console.log('attachments.length --->', attachments.length);
 		let asyncPodResults = await* Promise.all(asyncPodPromises);
 		let parseToJsonPromises = asyncPodResults.map(asyncPodResult => {
 			return pParseString(asyncPodResult[0].body);
@@ -28,16 +27,17 @@ module.exports = function(data){
 		parseToJsonResults.map(jsonResult => {
 			addPodToAttachments(jsonResult.pod);
 		});
-		// console.log('attachments2.length --->', attachments.length);
+		let text = attachments.length > 1 ? 
+					attachments.length + ' results..' : attachments.length + ' result..'
+
 		return {
 					attachments:attachments,
-					text:'some text'};
+					text:text};
 	}
 
 	function addPodToAttachments(pod){
 		_.forEach(pod.subpod, subpod => {
 			let attachment = getAttachment(pod, subpod);
-			// console.log('attachment -->', attachment);
 			attachments.push(attachment);
 		});
 	}
