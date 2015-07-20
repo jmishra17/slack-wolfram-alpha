@@ -34,10 +34,15 @@ module.exports = function(req, res, next){
 	async function getData(queryString){
 		let host = process.env.host || config.get('host');
 		let path = process.env.path || config.get('path');
-		let url = host + path + "?" + queryString;
-		let wolframResponse = await prequest(url);
-		let jsonBody = await pParseString(wolframResponse[0].body);
-		let attachmentsObj  = await wolframParser(jsonBody);
-		return attachmentsObj;
+		try {
+			let url = host + path + "?" + queryString;
+			let wolframResponse = await prequest(url);
+			let jsonBody = await pParseString(wolframResponse[0].body);
+			let attachmentsObj  = await wolframParser(jsonBody);
+			return attachmentsObj;
+		} catch(err) {
+			console.log('Error while awaiting on first-hand wolframResponse -------->', err);
+			return err;
+		}
 	}
 }
