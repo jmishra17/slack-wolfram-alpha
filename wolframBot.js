@@ -38,6 +38,7 @@ module.exports = function(req, res, next){
 			let url = host + path + "?" + queryString;
 			let wolframResponse = await prequest(url);
 			let jsonBody = await pParseString(wolframResponse[0].body);
+			console.log('jsonBody --->', jsonBody);
 			let attachmentsObj  = await wolframParser(jsonBody);
 			return attachmentsObj;
 		} catch(err) {

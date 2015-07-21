@@ -5,7 +5,6 @@ import {parseString} from 'xml2js';
 let prequest = Promise.promisify(request);
 let pParseString = Promise.promisify(parseString);
 module.exports = function(data){
-	let attachments = [];
 	if(data.queryresult.tips){
 		return getTipsData(data.queryresult.tips[0]);
 	}
@@ -13,14 +12,13 @@ module.exports = function(data){
 	return processPodData(data.queryresult.pod);
 
 	async function processPodData(pods){
-		let asyncPodPromises = [];
+		let asyncPodPromises = [], syncAttachments = [], asyncAttachments = [];
 		_.forEach(pods, pod => {
 			if(pod.$.async){
-				console.log('async ----->');
 				let asyncPodPromise = prequest(pod.$.async);
 				asyncPodPromises.push(asyncPodPromise);
 			} else {
-				addPodToAttachments(pod);
+				addAttachmentToArray(pod, syncAttachments);
 			}
 		});
 		try {
@@ -30,13 +28,17 @@ module.exports = function(data){
 			});
 			let parseToJsonResults = await* Promise.all(parseToJsonPromises);
 			parseToJsonResults.map(jsonResult => {
-				addPodToAttachments(jsonResult.pod);
+				addAttachmentToArray(jsonResult.pod, asyncAttachments);
 			});
-			let text = attachments.length > 1 ? 
-						attachments.length + ' results ..' : attachments.length + ' result ..'
+			console.log('syncAttachments.length -->', syncAttachments.length);
+			console.log('asyncAttachments.length -->', asyncAttachments.length);
+
+			let allAtachments = _.merge(syncAttachments, asyncAttachments);
+			let text = allAtachments.length > 1 ? 
+						allAtachments.length + ' results ..' : allAtachments.length + ' result ..';
 
 			return {
-				attachments:attachments,
+				attachments:allAtachments,
 				text:text
 			};
 		} catch(err){
@@ -45,6 +47,7 @@ module.exports = function(data){
 	}
 
 	function getTipsData(tipsObj){
+		let attachments = [];
 		_.forEach(tipsObj.tip, tipObj => {
 			let attachment = {};
 			attachment.text = tipObj.$.text;
@@ -58,10 +61,10 @@ module.exports = function(data){
 		};
 	}
 
-	function addPodToAttachments(pod){
+	function addAttachmentToArray(pod, attachmentsArray){
 		_.forEach(pod.subpod, subpod => {
 			let attachment = getAttachment(pod, subpod);
-			attachments.push(attachment);
+			attachmentsArray.push(attachment);
 		});
 	}
 
