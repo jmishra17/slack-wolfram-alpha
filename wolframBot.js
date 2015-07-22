@@ -10,6 +10,8 @@ let prequest = Promise.promisify(request);
 let pParseString = Promise.promisify(parseString);
 
 module.exports = function(req, res, next){
+	// console.log('req -->', req);
+	console.log('req.body ---->', req.body);
 	let triggerWord = req.body.trigger_word;
 	let configUsername = process.env.username || config.get('username');
 	let configTriggerWords = process.env.triggerWords || config.get('triggerWords');

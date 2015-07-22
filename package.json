@@ -4,7 +4,7 @@
   "description": "Slack with Wolfram|Alpha",
   "main": "app.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "mocha --require mocha-babel",
     "start": "node app.js"
   },
   "author": "Jasper Mishra <abhishek1704@gmail.com> (https://www.linkedin.com/profile/view?id=168344449)",
@@ -20,5 +20,10 @@
     "nconf": "^0.7.1",
     "request": "^2.58.0",
     "xml2js": "^0.4.9"
+  },
+  "devDependencies": {
+    "chai": "^3.2.0",
+    "mocha": "^2.2.5",
+    "supertest": "^1.0.1"
   }
 }
