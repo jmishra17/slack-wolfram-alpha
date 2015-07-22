@@ -48,6 +48,20 @@ describe('Inegration tests', function(){
 				done();
 			});
 		});
+
+		it("posts 'wolfram something something on something' and returns didyoumeans", function(done){
+			let textObj = {text: 'wolfram something something on something'};
+			request(appObj)
+			.post('/wolframBot')
+			.type('form')
+			.send(textObj)
+			.end(function(err, res){
+				if(err) return done(err);
+				expect(res.body.text).to.equal('Oops! did you mean any of the following:'
+											+' If so then try again by typing either of the following options');
+				done();
+			});
+		});
 	});
 });
 
