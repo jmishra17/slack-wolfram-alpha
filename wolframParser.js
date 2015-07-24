@@ -7,6 +7,9 @@ let pParseString = Promise.promisify(parseString);
 module.exports = function(data){
 	if(data.queryresult.tips){
 		return getTipsData(data.queryresult.tips[0]);
+	} else if(data.queryresult.didyoumeans){
+		console.log('didyoumeans', data.queryresult.didyoumeans[0]);
+		return getDidYouMeansData(data.queryresult.didyoumeans[0]);
 	}
 	let postFixTitle = data.queryresult.pod[0].subpod[0].plaintext[0];
 	return processPodData(data.queryresult.pod);
@@ -58,6 +61,23 @@ module.exports = function(data){
 		return {
 			attachments:attachments,
 			text:"Error while processing query"
+		};
+	}
+
+	function getDidYouMeansData(didYouMeansObj){
+		let attachments = [];
+		console.log('didYouMeansObj.didyoumean --->', didYouMeansObj.didyoumean);
+		_.forEach(didYouMeansObj.didyoumean, didyouMeanObj => {
+			console.log('didyouMeanObj -->', didyouMeanObj);
+			let attachment = {};
+			attachment.text = didyouMeanObj._;
+			attachment.fallback = attachment.text;
+			attachment.color = "warning";
+			attachments.push(attachment);
+		});
+		return {
+			attachments: attachments,
+			text:"Oops! did you mean any of the following: If so then try again by typing either of the following options"
 		};
 	}
 
