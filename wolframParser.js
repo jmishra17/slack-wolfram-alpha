@@ -77,7 +77,7 @@ module.exports = function(data){
 		});
 		return {
 			attachments: attachments,
-			text:"Oops! did you mean any of the following: If so then try again by typing either of the following options"
+			text:"Oops! did you mean any of the following: If so try typing 'wolfram' followed by the suggestion"
 		};
 	}
 
